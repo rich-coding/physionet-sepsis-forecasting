@@ -1,17 +1,17 @@
 # Predicción Temprana de Sepsis con Machine Learning
 
-Este proyecto tiene como objetivo desarrollar un modelo de machine learning para la predicción temprana de sepsis en pacientes de unidades de cuidados intensivos (UCI). El desarrollo se basa en los datos y la problemática definidos en el [PhysioNet/Computing in Cardiology Challenge 2019](https://physionet.org/content/challenge-2019/1.0.0/). [1]
+Este proyecto tiene como objetivo desarrollar un modelo de machine learning para la predicción temprana de sepsis en pacientes de unidades de cuidados intensivos (UCI). El desarrollo se basa en los datos y la problemática definidos en el [PhysioNet/Computing in Cardiology Challenge 2019](https://physionet.org/content/challenge-2019/1.0.0/). 
 
 ## Descripción del Problema
 
-La sepsis es una condición crítica que requiere detección y tratamiento tempranos para mejorar las probabilidades de supervivencia del paciente. [1] Este proyecto se enfoca en crear un sistema que, utilizando datos clínicos, alerte sobre un posible cuadro de sepsis con al menos 6 horas de antelación, permitiendo una intervención médica oportuna. [1]
+La sepsis es una condición crítica que requiere detección y tratamiento tempranos para mejorar las probabilidades de supervivencia del paciente.  Este proyecto se enfoca en crear un sistema que, utilizando datos clínicos, alerte sobre un posible cuadro de sepsis con al menos 6 horas de antelación, permitiendo una intervención médica oportuna. 
 
 ## Dataset
 
-El conjunto de datos utilizado es el proporcionado por el **PhysioNet Challenge 2019**. Incluye datos de series temporales (signos vitales) y datos demográficos de más de 40,000 pacientes de UCI. [1]
+El conjunto de datos utilizado es el proporcionado por el **PhysioNet Challenge 2019**. Incluye datos de series temporales (signos vitales) y datos demográficos de más de 40,000 pacientes de UCI. 
 
 - **Fuente Original:** [https://physionet.org/content/challenge-2019/1.0.0/](https://physionet.org/content/challenge-2019/1.0.0/)
-- **Variables:** El dataset contiene 40 covariables que incluyen signos vitales, resultados de laboratorio y datos demográficos por cada hora de estancia del paciente en la UCI. [1]
+- **Variables:** El dataset contiene 40 covariables que incluyen signos vitales, resultados de laboratorio y datos demográficos por cada hora de estancia del paciente en la UCI. 
 - **Etiqueta (`SepsisLabel`):** La variable objetivo indica si el paciente desarrollará sepsis.
 
 ## Modelo Propuesto
