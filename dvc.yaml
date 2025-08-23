@@ -1,0 +1,30 @@
+# dvc.yaml
+stages:
+  preprocess:
+    desc: "Preprocesa los datos crudos y los guarda en la carpeta processed"
+    cmd: python scripts/preprocess.py --input data/raw --output data/processed
+    deps:
+      - data/raw
+      - scripts/preprocess.py
+    outs:
+      - data/processed
+
+  train:
+    desc: "Entrena el modelo usando los datos procesados"
+    cmd: python scripts/train.py --input data/processed --output models
+    deps:
+      - data/processed
+      - scripts/train.py
+    outs:
+      - models/model.pkl # O la ruta completa a tu archivo de modelo
+
+  evaluate:
+    desc: "Evalúa el modelo y genera métricas de rendimiento"
+    cmd: python scripts/evaluate.py --model models/model.pkl --data data/processed --output results/metrics.json
+    deps:
+      - models/model.pkl
+      - data/processed
+      - scripts/evaluate.py
+    metrics:
+      - results/metrics.json:
+          cache: false
