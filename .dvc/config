@@ -1,0 +1,4 @@
+[core]
+    remote = sepsis2019
+['remote "sepsis2019"']
+    url = s3://physionet-sepsis-forecasting/sepsis2019
