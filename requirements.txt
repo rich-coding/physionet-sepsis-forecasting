@@ -17,7 +17,9 @@ tensorflow==2.16.1
 # DVC para el versionamiento de datos y pipelines.
 # Elige el soporte para tu almacenamiento remoto, ej: [s3], [gdrive], [azure], [ssh]
 # Ejemplo con S3: dvc[s3]==3.52.0
-dvc==3.52.0
+dvc_s3
+boto3
+pyarrow
 
 # -----------------------------------------------------------------------------
 # For notebooks and experimentation
