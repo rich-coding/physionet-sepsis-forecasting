@@ -1,4 +1,6 @@
 [core]
-    remote = sepsis2019
+    remote = myremote
 ['remote "sepsis2019"']
     url = s3://physionet-sepsis-forecasting/sepsis2019
+['remote "myremote"']
+    url = s3://sepsis-prediction-project-data-rich-coding
