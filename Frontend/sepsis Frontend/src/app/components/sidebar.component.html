@@ -1,0 +1,39 @@
+<mat-sidenav-container class="sidebar-container">
+  <mat-sidenav #sidenav mode="side" opened class="sidebar-sidenav">
+    <div class="sidebar-content">
+      <mat-card class="sidebar-tile kpi-tile">
+        <div class="tile-title">Alertas nuevas (24 h)</div>
+        <div class="tile-value">12</div>
+      </mat-card>
+      <mat-card class="sidebar-tile risk-tile alto">
+        <div class="chip alto">ALTO</div>
+        <div class="risk-count">23 pacientes</div>
+      </mat-card>
+      <mat-card class="sidebar-tile risk-tile medio">
+        <div class="chip medio">MEDIO</div>
+        <div class="risk-count">78 pacientes</div>
+      </mat-card>
+      <mat-card class="sidebar-tile risk-tile bajo">
+        <div class="chip bajo">BAJO</div>
+        <div class="risk-count">156 pacientes</div>
+      </mat-card>
+      <mat-card class="sidebar-tile tasa-tile">
+        <div class="tile-title">Tasa de alertas</div>
+        <div class="tile-value">
+          <span class="main">2.1</span> <span class="suffix">/ 24 h</span>
+        </div>
+      </mat-card>
+      <mat-card class="sidebar-tile estado-tile">
+        <div class="tile-title">Estado del sistema</div>
+        <mat-list>
+          <mat-list-item>IA operativa</mat-list-item>
+          <mat-list-item>0 incidentes (24 h)</mat-list-item>
+        </mat-list>
+      </mat-card>
+    </div>
+  </mat-sidenav>
+  <mat-sidenav-content>
+    
+      <app-umbrales-operativos></app-umbrales-operativos>
+  </mat-sidenav-content>
+</mat-sidenav-container>
