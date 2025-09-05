@@ -1,0 +1,12 @@
+# Ignorar carpetas de datos
+data/raw/
+data/processed/
+\data\raw
+\data\processed
+data\processed\*
+data\raw\*
+
+# Ignorar archivos de datos comunes
+*.parquet
+*.csv
+*.psv
