@@ -27,8 +27,8 @@ def download_file(url, local_path):
 def main():
     print("Starting data download from PhysioNet...")
     
-    # Decidamos qué set descargar. Empecemos por el B que es más pequeño.
-    set_to_download = "A" 
+    # Decidamos qué set descargar.
+    set_to_download = "A"  # Cambiar a "B" para descargar el otro set.
 
     target_dir = os.path.join(OUTPUT_DIR, f"training_set{set_to_download}")
     os.makedirs(target_dir, exist_ok=True)
