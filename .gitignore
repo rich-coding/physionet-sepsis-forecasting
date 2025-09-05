@@ -10,3 +10,4 @@ data\raw\*
 *.parquet
 *.csv
 *.psv
+data/raw/all_patients_unified.parquet
