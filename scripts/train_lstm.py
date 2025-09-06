@@ -2,9 +2,11 @@ import argparse
 import os
 import numpy as np
 import torch
+from sklearn.metrics import roc_auc_score, f1_score, accuracy_score, confusion_matrix
+import matplotlib.pyplot as plt
+import seaborn as sns
 from torch import nn
 from torch.utils.data import DataLoader, TensorDataset
-from sklearn.metrics import roc_auc_score, f1_score, accuracy_score
 import mlflow
 import random
 
@@ -45,10 +47,7 @@ def main():
     num_samples = int(X_train.shape[0] * args.sample_frac)
     X_train_small = np.array(X_train[:num_samples])
     y_train_small = np.array(y_train[:num_samples])
-    # Imprimite la cantidad de positivos en el conjunto reducido
-    print(f"Positivos en entrenamiento reducido: {y_train_small.sum()} de {len(y_train_small)}")
-    print(f"Positivos en validación: {y_val.sum()} de {len(y_val)}")
-
+    
     X_train_tensor = torch.tensor(X_train_small, dtype=torch.float32)
     y_train_tensor = torch.tensor(y_train_small, dtype=torch.float32).unsqueeze(1)
     X_val_tensor = torch.tensor(X_val, dtype=torch.float32)
@@ -141,6 +140,24 @@ def main():
         print("Positivos reales en validación:", labels_bin.sum())
         print("Positivos predichos:", preds_bin.sum())
 
+        # Generar y guardar la matriz de confusión de la última época
+        cm = confusion_matrix(labels_bin, preds_bin)
+        fig, ax = plt.subplots(figsize=(8, 6))
+        sns.heatmap(cm, annot=True, fmt='d', cmap='Blues', ax=ax, 
+                    xticklabels=['No Sepsis', 'Sepsis'], 
+                    yticklabels=['No Sepsis', 'Sepsis'])
+        ax.set_ylabel('Etiqueta Real')
+        ax.set_xlabel('Etiqueta Predicha')
+        ax.set_title('Matriz de Confusión (Última Época)')
+        
+        # Guardar la figura en un archivo
+        cm_path = f"cm_{RUN_NAME}.png"
+        plt.savefig(cm_path)
+        plt.close(fig) # Cerrar la figura para liberar memoria
+        
+        # Registrar la imagen como un artefacto en MLflow
+        mlflow.log_artifact(cm_path, "plots")
+        
         # Guardar modelo
         model_path = os.path.join(os.path.dirname(__file__), '..', 'models', '{RUN_NAME}.pth')
         torch.save(model.state_dict(), model_path)
