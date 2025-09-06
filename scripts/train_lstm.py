@@ -67,13 +67,13 @@ def main():
             self.num_layers = num_layers
             self.lstm = nn.LSTM(input_size, hidden_size, num_layers, batch_first=True, dropout=0.2)
             self.fc = nn.Linear(hidden_size, output_size)
-            self.sigmoid = nn.Sigmoid()
+            # self.sigmoid = nn.Sigmoid()  <-- LINEA ELIMINADA
         def forward(self, x):
             h0 = torch.zeros(self.num_layers, x.size(0), self.hidden_size).to(x.device)
             c0 = torch.zeros(self.num_layers, x.size(0), self.hidden_size).to(x.device)
             out, _ = self.lstm(x, (h0, c0))
             out = self.fc(out[:, -1, :])
-            out = self.sigmoid(out)
+            # out = self.sigmoid(out)  <-- LINEA ELIMINADA
             return out
 
     input_size = X_train_tensor.shape[2]
@@ -81,9 +81,12 @@ def main():
 
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     model = SepsisLSTM(input_size, args.hidden_size, args.num_layers, output_size).to(device)
+
     # Calcula el peso de la clase positiva
     pos_weight = torch.tensor([(len(y_train_small) - y_train_small.sum()) / y_train_small.sum()]).to(device)
-    criterion = nn.BCELoss(pos_weight=pos_weight)
+    # Cambio de BCELoss por BCEWithLogitsLoss para mayor estabilidad numérica en desbalance de clases
+    criterion = nn.BCEWithLogitsLoss(pos_weight=pos_weight)
+
     optimizer = torch.optim.Adam(model.parameters(), lr=args.learning_rate)
 
     # MLflow
@@ -139,7 +142,7 @@ def main():
         print("Positivos predichos:", preds_bin.sum())
 
         # Guardar modelo
-        model_path = os.path.join(os.path.dirname(__file__), '..', 'models', f'{RUN_NAME}.pth')
+        model_path = os.path.join(os.path.dirname(__file__), '..', 'models', '{RUN_NAME}.pth')
         torch.save(model.state_dict(), model_path)
         mlflow.log_artifact(model_path)
 
