@@ -159,7 +159,7 @@ def main():
         mlflow.log_artifact(cm_path, "plots")
         
         # Guardar modelo
-        model_path = os.path.join(os.path.dirname(__file__), '..', 'models', '{RUN_NAME}.pth')
+        model_path = os.path.join(os.path.dirname(__file__), '..', 'models', f'{RUN_NAME}.pth')
         torch.save(model.state_dict(), model_path)
         mlflow.log_artifact(model_path)
 
