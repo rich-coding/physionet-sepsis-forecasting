@@ -1,40 +1,33 @@
 # dvc.yaml
 stages:
-  preprocess:
-    desc: "Preprocesa los datos crudos y los guarda en la carpeta processed"
-    cmd: python scripts/preprocess.py --input data/raw --output data/processed
-    deps:
-      - data/raw
-      - scripts/preprocess.py
-    outs:
-      - data/processed
-
   train:
-    desc: "Entrena el modelo usando los datos procesados"
+    desc: Entrena el modelo usando los datos procesados
     cmd: python scripts/train.py --input data/processed --output models
     deps:
-      - data/processed
-      - scripts/train.py
+    - data/processed
+    - scripts/train.py
     outs:
-      - models/model.pkl
+    - models/model.pkl
 
   evaluate:
-    desc: "Evalúa el modelo y genera métricas de rendimiento"
-    cmd: python scripts/evaluate.py --model models/model.pkl --data data/processed --output results/metrics.json
+    desc: Evalúa el modelo y genera métricas de rendimiento
+    cmd: python scripts/evaluate.py --model models/model.pkl --data 
+      data/processed --output results/metrics.json
     deps:
-      - models/model.pkl
-      - data/processed
-      - scripts/evaluate.py
+    - models/model.pkl
+    - data/processed
+    - scripts/evaluate.py
     metrics:
-      - results/metrics.json:
-          cache: false
+    - results/metrics.json:
+        cache: false
 
   predict:
-    desc: "Genera predicciones sobre nuevos datos usando el modelo entrenado"
-    cmd: python scripts/predict.py --model models/model.pkl --input data/inference --output results/predictions.csv
+    desc: Genera predicciones sobre nuevos datos usando el modelo entrenado
+    cmd: python scripts/predict.py --model models/model.pkl --input 
+      data/inference --output results/predictions.csv
     deps:
-      - models/model.pkl
-      - data/inference
-      - scripts/predict.py
+    - models/model.pkl
+    - data/inference
+    - scripts/predict.py
     outs:
-      - results/predictions.csv
+    - results/predictions.csv
