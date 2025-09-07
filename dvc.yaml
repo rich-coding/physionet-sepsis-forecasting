@@ -1,14 +1,5 @@
 # dvc.yaml
 stages:
-  train:
-    desc: Entrena el modelo usando los datos procesados
-    cmd: python scripts/train.py --input data/processed --output models
-    deps:
-    - data/processed
-    - scripts/train.py
-    outs:
-    - models/model.pkl
-
   evaluate:
     desc: Evalúa el modelo y genera métricas de rendimiento
     cmd: python scripts/evaluate.py --model models/model.pkl --data 
