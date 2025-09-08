@@ -19,3 +19,9 @@ data/*
 # Archivos generados por el sistema operativo
 .DS_Store
 Thumbs.db
+# Ignorar archivos de datos comunes
+*.parquet
+*.csv
+*.psv
+data/raw/all_patients_unified.parquet
+/data
