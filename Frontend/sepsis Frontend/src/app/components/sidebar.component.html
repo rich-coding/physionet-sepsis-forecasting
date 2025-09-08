@@ -107,7 +107,7 @@
         </div>
       </mat-card>
       <!-- Layout de dos columnas: Paciente y Estado -->
-      <div class="paciente-layout" style="display: grid; grid-template-columns: 2fr 1fr; gap: 24px; align-items: flex-start; margin-top: 24px;">
+  <div class="paciente-layout" style="display: grid; grid-template-columns: 1fr 2fr; gap: 24px; align-items: flex-start; margin-top: 24px;">
         <div class="paciente-main">
           <mat-card class="paciente-card">
             <div class="paciente-header">
@@ -128,9 +128,9 @@
                 <path d="M0,160 L20,80 L60,60 L100,120 L140,40 L180,60 L220,100 L260,80 L300,120 L320,160" stroke="#d84343" stroke-width="3" stroke-linecap="round" fill="none" style="transition: d .25s ease;" />
                 <!-- Línea de referencia p=0.60 -->
                 <line x1="0" y1="120" x2="320" y2="120" stroke="#94a3b8" stroke-width="2" stroke-dasharray="4 6" />
-                <text x="310" y="112" font-size="12" fill="#64748b">p = 0.60</text>
+                <text x="310" y="112" font-size="16" fill="#64748b">p = 0.60</text>
               </svg>
-              <div class="paciente-chart-leyenda">Regla de resolución: cerrar si p&lt;0.60 por 3 h.</div>
+              <div class="paciente-chart-leyenda" style="font-size: 1.15rem;">Regla de resolución: cerrar si p&lt;0.60 por 3 h.</div>
             </div>
           </mat-card>
           <mat-card class="notas-card" style="margin-top: 16px; background: #fff; border: 1px solid #e5e9f1; border-radius: 16px; box-shadow: 0 6px 18px rgba(16,24,40,.06); padding: 18px 20px;">
