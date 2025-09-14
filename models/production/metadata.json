@@ -1,0 +1,23 @@
+{
+  "features_order": [
+    "ICULOS",
+    "Temp",
+    "BaseExcess",
+    "DBP",
+    "FiO2",
+    "Gender",
+    "Age",
+    "HCO3",
+    "HR",
+    "HospAdmTime",
+    "Magnesium",
+    "O2Sat",
+    "Resp"
+  ],
+  "threshold_f2": 0.536,
+  "classes": [
+    0,
+    1
+  ],
+  "model_type": "HistGradientBoostingClassifier"
+}

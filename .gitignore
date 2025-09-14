@@ -2,6 +2,11 @@
 __pycache__/
 *.pyc
 .env
+.venv
+venv
+
+#MLflow
+mlruns
 
 # Directorios de datos
 # Esta simple regla ignora la carpeta 'data' completa y todo su contenido.
