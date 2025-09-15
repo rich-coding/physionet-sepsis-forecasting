@@ -50,10 +50,10 @@ docker-run:
 	docker run --rm -p $(PORT):8080 -e MODELS_DIR=/app/models/production/ $(IMAGE):$(TAG)
 
 test:
-	tox -e test_app
+	$(ACTIVATE) && tox -e test_app
 
 checks:
-	tox -e checks
+	$(ACTIVATE) && tox -e checks
 
 ecr-push:
 	AWS_REGION=$(AWS_REGION) REPO_NAME=$(REPO_NAME) IMAGE_TAG=$(TAG) bash aws/ecr_push.sh
