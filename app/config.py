@@ -1,5 +1,5 @@
-from pathlib import Path
 import os
+from pathlib import Path
 
 MODELS_DIR = Path(os.getenv("MODELS_DIR", "models/production"))
 MODEL_PATH = MODELS_DIR / "hgb_model.joblib"

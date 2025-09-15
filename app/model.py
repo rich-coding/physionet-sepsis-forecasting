@@ -1,11 +1,15 @@
 from __future__ import annotations
+
 import json
 from pathlib import Path
+
 import numpy as np
 import pandas as pd
 from joblib import load
-from .config import MODEL_PATH, META_PATH
+
+from .config import META_PATH, MODEL_PATH
 from .preprocessing import Preprocessor
+
 
 class HGBCModel:
     def __init__(self, model_path: Path = MODEL_PATH, meta_path: Path = META_PATH):

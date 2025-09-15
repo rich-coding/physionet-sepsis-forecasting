@@ -1,9 +1,13 @@
 from __future__ import annotations
+
 import json
 from pathlib import Path
+
 import pandas as pd
 from joblib import load
-from .config import PREPROC_PATH, META_PATH
+
+from .config import META_PATH, PREPROC_PATH
+
 
 class Preprocessor:
     def __init__(self, preproc_path: Path = PREPROC_PATH, meta_path: Path = META_PATH):

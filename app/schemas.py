@@ -1,6 +1,9 @@
 from __future__ import annotations
-from pydantic import BaseModel, Field, ConfigDict
+
 from typing import List
+
+from pydantic import BaseModel, ConfigDict
+
 
 class SepsisRecord(BaseModel):
     patient_id: str
@@ -20,8 +23,10 @@ class SepsisRecord(BaseModel):
 
     model_config = ConfigDict(extra="forbid")
 
+
 class SepsisBatchRequest(BaseModel):
     records: List[SepsisRecord]
+
 
 class SepsisScore(BaseModel):
     patient_id: str

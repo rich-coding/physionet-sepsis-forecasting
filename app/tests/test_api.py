@@ -1,7 +1,9 @@
 from fastapi.testclient import TestClient
+
 from app.main import app
 
 client = TestClient(app)
+
 
 def test_health():
     r = client.get("api/v1/health")
@@ -10,14 +12,27 @@ def test_health():
     assert body["status"] == "ok"
     assert "threshold" in body
 
+
 def test_score_one_record():
     payload = {
-        "records": [{
-            "patient_id": "123",
-            "ICULOS": 12, "Temp": 36.8, "BaseExcess": 0.0, "DBP": 60, "FiO2": 0.21,
-            "Gender": 1, "Age": 65, "HCO3": 22, "HR": 95, "HospAdmTime": -24.0,
-            "Magnesium": 2.0, "O2Sat": 97.0, "Resp": 18
-        }]
+        "records": [
+            {
+                "patient_id": "123",
+                "ICULOS": 12,
+                "Temp": 36.8,
+                "BaseExcess": 0.0,
+                "DBP": 60,
+                "FiO2": 0.21,
+                "Gender": 1,
+                "Age": 65,
+                "HCO3": 22,
+                "HR": 95,
+                "HospAdmTime": -24.0,
+                "Magnesium": 2.0,
+                "O2Sat": 97.0,
+                "Resp": 18,
+            }
+        ]
     }
     r = client.post("api/v1/score", json=payload)
     assert r.status_code == 200
