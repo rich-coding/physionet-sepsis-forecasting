@@ -8,22 +8,6 @@ from .config import API_PATH, API_TITLE, API_VERSION
 from .model import HGBCModel
 from .schemas import SepsisBatchRequest, SepsisScore
 
-FEATURES = [
-    "ICULOS",
-    "Temp",
-    "BaseExcess",
-    "DBP",
-    "FiO2",
-    "Gender",
-    "Age",
-    "HCO3",
-    "HR",
-    "HospAdmTime",
-    "Magnesium",
-    "O2Sat",
-    "Resp",
-]
-
 app = FastAPI(title=API_TITLE, version=API_VERSION)
 model = HGBCModel()
 
@@ -47,31 +31,20 @@ def health():
 
 @api.post("/score", response_model=list[SepsisScore])
 def score(req: SepsisBatchRequest):
-    # DataFrame de entrada
     raw_df = pd.DataFrame([r.model_dump() for r in req.records])
     raw_df["patient_id"] = raw_df["patient_id"].astype(str)
 
-    # Solo columnas de features (en el orden esperado por el preproc guardado)
-    X = raw_df[FEATURES].copy()
+    base_cols = [c for c in raw_df.columns if c != "patient_id"]
+    raw_df[base_cols] = raw_df[base_cols].apply(pd.to_numeric, errors="coerce")
 
-    # Coerción robusta a numérico (por si algo viene como string)
-    X = X.apply(pd.to_numeric, errors="coerce")
-
-    # Predict
-    p = model.predict_proba(X)
+    p = model.predict_proba(raw_df)
     thr = model.threshold
     preds = (p >= thr).astype(int)
 
-    # Respuesta (conservando el patient_id original como string)
-    out = [
-        SepsisScore(
-            patient_id=str(pid), score=float(prob), pred=int(pred), threshold=thr
-        )
-        for pid, prob, pred in zip(
-            raw_df["patient_id"].tolist(), p.tolist(), preds.tolist()
-        )
+    return [
+        SepsisScore(patient_id=str(pid), score=float(prob), pred=int(pred), threshold=thr)
+        for pid, prob, pred in zip(raw_df["patient_id"].tolist(), p.tolist(), preds.tolist())
     ]
-    return out
 
 
 app.include_router(api)
