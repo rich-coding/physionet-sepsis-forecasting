@@ -1,8 +1,4 @@
 [core]
-    remote = s3remote
-['remote "sepsis2019"']
+    remote = aws-remote
+['remote "aws-remote"']
     url = s3://physionet-sepsis-forecasting/sepsis2019
-['remote "myremote"']
-    url = s3://sepsis-prediction-project-data-rich-coding
-['remote "s3remote"']
-    url = s3://sepsis-prediction-project-data-rich-coding/dvc/
