@@ -1,0 +1,13 @@
+#!/bin/bash
+set -xe
+dnf -y update
+dnf -y install docker awscli
+systemctl enable --now docker
+
+
+aws ecr get-login-password --region ${region} \
+    | docker login --username AWS --password-stdin "${registry}"
+
+docker pull "${image_uri}"
+docker ps -aq --filter "name=app" | xargs -r docker rm -f
+docker run -d --name app -p ${host_port}:${container_port} --restart unless-stopped "${image_uri}"

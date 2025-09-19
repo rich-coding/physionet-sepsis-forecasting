@@ -14,6 +14,13 @@ REPO_NAME=$(IMAGE)
 CLUSTER=sepsis2019-cluster
 SERVICE=sepsis2019-svc
 
+IMAGE_URI=728377120672.dkr.ecr.us-east-1.amazonaws.com/sepsis2019-api:latest
+INSTANCE_TYPE=t3.micro
+KEY_NAME=FirstEC2InstancePairKey
+HOST_PORT=80
+APP_PORT=8080
+INSTANCE_PROFILE_NAME = LabInstanceProfile
+
 .PHONY: help venv install train serve docker-build docker-run test checks ecr-push ecs-deploy clean
 
 help:
@@ -58,8 +65,23 @@ checks:
 ecr-push:
 	AWS_REGION=$(AWS_REGION) REPO_NAME=$(REPO_NAME) IMAGE_TAG=$(TAG) bash aws/ecr_push.sh
 
-ecs-deploy:
-	AWS_REGION=$(AWS_REGION) CLUSTER=$(CLUSTER) SERVICE=$(SERVICE) bash aws/ecs_deploy.sh
+ec2-deploy:
+	@test -n "$(AWS_REGION)" || (echo "Falta AWS_REGION"; exit 1)
+	@test -n "$(IMAGE_URI)"  || (echo "Falta IMAGE_URI (ECR URI)"; exit 1)
+	terraform -chdir=infra init -upgrade
+	terraform -chdir=infra apply -auto-approve \
+		-var "aws_region=$(AWS_REGION)" \
+		-var "image_uri=$(IMAGE_URI)" \
+		-var "instance_type=$(INSTANCE_TYPE)" \
+		-var "instance_profile_name=$(INSTANCE_PROFILE_NAME)" \
+		-var "host_port=$(HOST_PORT)" \
+		-var "app_port=$(APP_PORT)" \
+		-var "key_name=$(KEY_NAME)"
+
+ec2-destroy:
+	@test -n "$(AWS_REGION)" || (echo "Falta AWS_REGION"; exit 1)
+	terraform -chdir=infra destroy -auto-approve \
+		-var "aws_region=$(AWS_REGION)"
 
 clean:
 	rm -rf $(VENV) .mypy_cache .pytest_cache __pycache__ mlruns artifacts
