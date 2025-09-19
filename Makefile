@@ -6,13 +6,13 @@ UVICORN=uvicorn
 VENV=.venv
 ACTIVATE=. $(VENV)/bin/activate
 
-IMAGE?=sepsis2019-api
-TAG?=latest
-PORT?=8080
-AWS_REGION?=us-east-1
-REPO_NAME?=$(IMAGE)
-CLUSTER?=sepsis2019-cluster
-SERVICE?=sepsis2019-svc
+IMAGE=sepsis2019-api
+TAG=latest
+PORT=8080
+AWS_REGION=us-east-1
+REPO_NAME=$(IMAGE)
+CLUSTER=sepsis2019-cluster
+SERVICE=sepsis2019-svc
 
 .PHONY: help venv install train serve docker-build docker-run test checks ecr-push ecs-deploy clean
 
