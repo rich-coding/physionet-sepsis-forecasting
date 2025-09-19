@@ -30,20 +30,17 @@ def health():
 
 
 @api.post("/score", response_model=list[SepsisScore])
-def score(req: SepsisBatchRequest):
-    raw_df = pd.DataFrame([r.model_dump() for r in req.records])
-    raw_df["patient_id"] = raw_df["patient_id"].astype(str)
-
-    base_cols = [c for c in raw_df.columns if c != "patient_id"]
-    raw_df[base_cols] = raw_df[base_cols].apply(pd.to_numeric, errors="coerce")
-
-    p = model.predict_proba(raw_df)
+def score(request: SepsisBatchRequest):
+    df_prob = model.predict_proba(request)
     thr = model.threshold
-    preds = (p >= thr).astype(int)
 
+    pids  = df_prob["patient_id"].astype(str).tolist()
+    probs = df_prob["max_prob"].astype(float).tolist()
+    preds = [int(p >= thr) for p in probs]
+    
     return [
         SepsisScore(patient_id=str(pid), score=float(prob), pred=int(pred), threshold=thr)
-        for pid, prob, pred in zip(raw_df["patient_id"].tolist(), p.tolist(), preds.tolist())
+        for pid, prob, pred in zip(pids, probs, preds)
     ]
 
 
