@@ -5,6 +5,7 @@ PIP=pip
 UVICORN=uvicorn
 VENV=.venv
 ACTIVATE=. $(VENV)/bin/activate
+BREW=brew
 
 IMAGE=sepsis2019-api
 TAG=latest
@@ -21,7 +22,31 @@ HOST_PORT=80
 APP_PORT=8080
 INSTANCE_PROFILE_NAME = LabInstanceProfile
 
-.PHONY: help venv install train serve docker-build docker-run test checks ecr-push ecs-deploy clean
+.PHONY: ensure-brew
+ensure-brew:
+	@if [ "$$(uname)" = "Darwin" ]; then \
+		if ! command -v $(BREW) >/dev/null 2>&1; then \
+			echo "Homebrew not found. Install from https://brew.sh first."; exit 1; \
+		fi; \
+	fi
+
+.PHONY: ensure-terraform terraform-install
+ensure-terraform: ensure-brew
+	@if ! command -v terraform >/dev/null 2>&1; then \
+		if [ "$$(uname)" = "Darwin" ]; then \
+			echo "Installing Terraform via Homebrew..."; \
+				$(BREW) tap hashicorp/tap || true; \
+				$(BREW) install hashicorp/tap/terraform;  \
+		else \
+			echo "Terraform not found. Please install it (e.g., https://developer.hashicorp.com/terraform/install)."; exit 1; \
+		fi \
+	fi
+	@terraform -version
+
+terraform-install: ensure-terraform
+	@true
+
+.PHONY: help venv install train serve docker-build docker-run test checks ecr-push ec2-deploy ec2-destroy clean
 
 help:
 	@echo "Targets:"
@@ -34,7 +59,8 @@ help:
 	@echo "  make test          # run pytest via tox"
 	@echo "  make checks        # run lint/type checks via tox"
 	@echo "  make ecr-push      # build & push to ECR"
-	@echo "  make ecs-deploy    # register task def & update service"
+	@echo "  make ec2-deploy    # deploy EC2 with ECR images registred"
+	@echo "  make ec2-destroy   # destroy infraestructure deployed"
 	@echo "  make clean         # remove caches and venv"
 
 venv:
@@ -65,7 +91,7 @@ checks:
 ecr-push:
 	AWS_REGION=$(AWS_REGION) REPO_NAME=$(REPO_NAME) IMAGE_TAG=$(TAG) bash aws/ecr_push.sh
 
-ec2-deploy:
+ec2-deploy: ensure-terraform
 	@test -n "$(AWS_REGION)" || (echo "Falta AWS_REGION"; exit 1)
 	@test -n "$(IMAGE_URI)"  || (echo "Falta IMAGE_URI (ECR URI)"; exit 1)
 	terraform -chdir=infra init -upgrade
@@ -78,7 +104,7 @@ ec2-deploy:
 		-var "app_port=$(APP_PORT)" \
 		-var "key_name=$(KEY_NAME)"
 
-ec2-destroy:
+ec2-destroy: ensure-terraform
 	@test -n "$(AWS_REGION)" || (echo "Falta AWS_REGION"; exit 1)
 	terraform -chdir=infra destroy -auto-approve \
 		-var "aws_region=$(AWS_REGION)"
