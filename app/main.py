@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import pandas as pd
 from fastapi import APIRouter, FastAPI
 from fastapi.responses import RedirectResponse
 
@@ -34,12 +33,14 @@ def score(request: SepsisBatchRequest):
     df_prob = model.predict_proba(request)
     thr = model.threshold
 
-    pids  = df_prob["patient_id"].astype(str).tolist()
+    pids = df_prob["patient_id"].astype(str).tolist()
     probs = df_prob["max_prob"].astype(float).tolist()
     preds = [int(p >= thr) for p in probs]
-    
+
     return [
-        SepsisScore(patient_id=str(pid), score=float(prob), pred=int(pred), threshold=thr)
+        SepsisScore(
+            patient_id=str(pid), score=float(prob), pred=int(pred), threshold=thr
+        )
         for pid, prob, pred in zip(pids, probs, preds)
     ]
 

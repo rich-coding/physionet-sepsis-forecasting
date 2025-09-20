@@ -1,16 +1,24 @@
 import numpy as np
-import pandas as pd
 
 from app.preprocessing import Preprocessor
-from app.schemas import SepsisBatchRequest
-from app.schemas import SepsisRecord
-from app.schemas import SepsisRequest
+from app.schemas import SepsisBatchRequest, SepsisRecord, SepsisRequest
 
 cols = [
-    "ICULOS", "Temp", "BaseExcess", "DBP", "FiO2",
-    "Gender", "Age", "HCO3", "HR", "HospAdmTime",
-    "Magnesium", "O2Sat", "Resp"
+    "ICULOS",
+    "Temp",
+    "BaseExcess",
+    "DBP",
+    "FiO2",
+    "Gender",
+    "Age",
+    "HCO3",
+    "HR",
+    "HospAdmTime",
+    "Magnesium",
+    "O2Sat",
+    "Resp",
 ]
+
 
 def test_preprocessor_load_and_transform():
     prep = Preprocessor()
@@ -27,7 +35,9 @@ def test_preprocessor_load_and_transform():
 
     for field in cols:
         assert field in record, f"Falta el campo {field}"
-        assert isinstance(record[field], (int, float)), f"El campo {field} no es numérico"
+        assert isinstance(
+            record[field], (int, float)
+        ), f"El campo {field} no es numérico"
         assert np.isfinite(record[field]), f"El campo {field} tiene un valor inválido"
 
     # --- Ejecutar transformador ---
@@ -43,6 +53,7 @@ def test_preprocessor_load_and_transform():
     assert Xt.shape == (1, 174)
     assert np.isfinite(Xt).all()
 
+
 def get_batch_request() -> SepsisBatchRequest:
     record = SepsisRecord(
         ICULOS=40.0,
@@ -57,14 +68,9 @@ def get_batch_request() -> SepsisBatchRequest:
         HospAdmTime=-0.03,
         Magnesium=1.8,
         O2Sat=95.0,
-        Resp=22.0
+        Resp=22.0,
     )
 
-    request = SepsisRequest(
-        patient_id="p000283",
-        records=[record]
-    )
+    request = SepsisRequest(patient_id="p000283", records=[record])
 
-    return SepsisBatchRequest(
-        batch=[request]
-    )
+    return SepsisBatchRequest(batch=[request])

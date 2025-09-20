@@ -4,6 +4,7 @@ from typing import List
 
 from pydantic import BaseModel, ConfigDict
 
+
 class SepsisRecord(BaseModel):
     ICULOS: float
     Temp: float
@@ -21,12 +22,15 @@ class SepsisRecord(BaseModel):
 
     model_config = ConfigDict(extra="forbid")
 
+
 class SepsisRequest(BaseModel):
     patient_id: str
     records: List[SepsisRecord]
 
+
 class SepsisBatchRequest(BaseModel):
     batch: List[SepsisRequest]
+
 
 class SepsisScore(BaseModel):
     patient_id: str
