@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatListModule } from '@angular/material/list';
@@ -7,6 +7,7 @@ import { MatCardModule } from '@angular/material/card';
 import { UmbralesOperativosComponent } from "./umbrales-operativos.component";
 import { MatTableModule } from '@angular/material/table';
 import { MatButtonModule } from '@angular/material/button';
+import { OpenApiClient } from '../core/api/client/openapi-client';
 
 @Component({
   selector: 'app-sidebar',
@@ -25,7 +26,9 @@ import { MatButtonModule } from '@angular/material/button';
   
 
 })
-export class SidebarComponent {
+export class SidebarComponent implements OnInit {
+  readonly openapiClient = inject(OpenApiClient)
+  
   displayedColumns: string[] = [
     'id', 'riesgo', 'tendencia', 'hora', 'signos', 'estado', 'acciones'
   ];
@@ -89,4 +92,11 @@ export class SidebarComponent {
       estado: 'NUEVA'
     }
   ];
+
+  constructor() { }
+  ngOnInit(): void {
+    this.openapiClient.getPatientsData().subscribe((data: Array<>) => {
+      this.pacientes=data.map()
+    });
+  }
 }
