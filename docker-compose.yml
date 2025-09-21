@@ -19,7 +19,7 @@ services:
 
   sepsis-frontend:
     build:
-      context: ./frontend          
+      context: ./front          
       dockerfile: Dockerfile
     image: sepsis2019-frontend:latest
     container_name: sepsis-frontend

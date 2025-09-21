@@ -77,7 +77,7 @@ docker-build-api:
 	docker build -t $(API_IMAGE):$(API_TAG) -f app/Dockerfile .
 
 docker-build-frontend:
-	docker build -t $(FE_IMAGE):$(FE_TAG) ./frontend
+	docker build -t $(FE_IMAGE):$(FE_TAG) ./front
 
 docker-build-all: docker-build-api docker-build-frontend
 
