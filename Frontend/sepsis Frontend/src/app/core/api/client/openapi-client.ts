@@ -3,7 +3,7 @@
  * Fecha: 20 de septiembre de 2025
  */
 
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { SepsisBatchRequest, SepsisScore } from '../models/sepsis.models';
@@ -12,8 +12,8 @@ import { SepsisBatchRequest, SepsisScore } from '../models/sepsis.models';
   providedIn: 'root',
 })
 export class OpenApiClient {
-  private readonly baseUrl = 'http://ec2-44-192-130-121.compute-1.amazonaws.com';
-  private readonly mockUrl = '/assets/mock.json'; // Ruta al archivo mock.json
+  private readonly baseUrl = 'http://ec2-3-215-142-220.compute-1.amazonaws.com';
+  private readonly mockUrl = '/assets/mock_'; // Ruta al archivo mock.json
   constructor(private http: HttpClient) {}
 
   /**
@@ -21,7 +21,7 @@ export class OpenApiClient {
    * @param request The batch request containing patient data.
    * @returns An observable of an array of sepsis scores.
    */
-  scoreApiV1ScorePost(request: SepsisBatchRequest): Observable<SepsisScore[]> {
+  scoreApiV1ScorePost(request: any): Observable<SepsisScore[]> {
     const url = `${this.baseUrl}/api/v1/score`;
     return this.http.post<SepsisScore[]>(url, request);
   }
@@ -30,7 +30,16 @@ export class OpenApiClient {
    * Método para obtener los datos del archivo mock.json.
    * @returns Un observable con los datos del archivo mock.json.
    */
-  getPatientsData(): Observable<any> {
-    return this.http.get<any>(this.mockUrl);
+  getPatientsData(turno: string): Observable<any> {
+    //const url = `${this.baseUrl}/api/v1/turn?number=${turno}`;
+    return this.http.get<any>(`${this.mockUrl}${turno}.json`, {
+      headers: new HttpHeaders({
+        Accept: 'application/json',
+        'Accept-Encoding': 'gzip, deflate, br',
+        'Content-Type': 'application/json'
+      }),
+      timeout: 60000,
+      keepalive: true
+    });
   }
 }

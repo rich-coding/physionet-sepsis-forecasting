@@ -4,10 +4,27 @@ import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatListModule } from '@angular/material/list';
 import { MatIconModule } from '@angular/material/icon';
 import { MatCardModule } from '@angular/material/card';
-import { UmbralesOperativosComponent } from "./umbrales-operativos.component";
+import { UmbralesOperativosComponent } from './umbrales-operativos.component';
 import { MatTableModule } from '@angular/material/table';
 import { MatButtonModule } from '@angular/material/button';
 import { OpenApiClient } from '../core/api/client/openapi-client';
+import { MatSelectChange, MatSelectModule } from '@angular/material/select';
+
+const CHIP_MAP: any = {
+  ICULOS: 'Tiempo UCI',
+  Temp: 'Temperatura',
+  BaseExcess: 'Exceso Bicarbonato',
+  DBP: 'Presión Diastólica',
+  FiO2: 'Oxygeno',
+  Gender: 'Genero',
+  Age: 'Edad',
+  HCO3: 'Bicarbonatos',
+  HR: 'Ritmo Cardíaco',
+  HospAdmTime: 'Hor. Ing. UCI',
+  Magnesium: 'Magnesio',
+  O2Sat: 'Saturación O2',
+  Resp: 'Respiración',
+};
 
 @Component({
   selector: 'app-sidebar',
@@ -19,84 +36,74 @@ import { OpenApiClient } from '../core/api/client/openapi-client';
     MatListModule,
     MatIconModule,
     MatCardModule,
-  UmbralesOperativosComponent,
-  MatTableModule,
-  MatButtonModule
-]
-  
-
+    UmbralesOperativosComponent,
+    MatTableModule,
+    MatButtonModule,
+    MatSelectModule
+  ],
 })
 export class SidebarComponent implements OnInit {
-  readonly openapiClient = inject(OpenApiClient)
-  
-  displayedColumns: string[] = [
-    'id', 'riesgo', 'tendencia', 'hora', 'signos', 'estado', 'acciones'
-  ];
-  pacientes = [
-    {
-      id: '00432',
-      riesgo: '0.87',
-      tendencia: 'ALTO',
-      hora: '10:05',
-      signos: [
-        { label: 'HR 110', tipo: 'hr' },
-        { label: 'MAP 58', tipo: 'map' },
-        { label: 'Temp 38.5', tipo: 'temp' },
-        { label: 'SpO2 91%', tipo: 'spo2' }
-      ],
-      estado: 'NUEVA'
-    },
-    {
-      id: '00318',
-      riesgo: '0.82',
-      tendencia: 'ALTO',
-      hora: '09:55',
-      signos: [
-        { label: 'HR 104', tipo: 'hr' },
-        { label: 'MAP 63', tipo: 'map' },
-        { label: 'Resp 26', tipo: 'resp' }
-      ],
-      estado: 'VIGILANCIA'
-    },
-    {
-      id: '00901',
-      riesgo: '0.74',
-      tendencia: 'MEDIO',
-      hora: '10:10',
-      signos: [
-        { label: 'HR 95', tipo: 'map' },
-        { label: 'MAP 70', tipo: 'map' }
-      ],
-      estado: 'VIGILANCIA'
-    },
-    {
-      id: '00077',
-      riesgo: '0.71',
-      tendencia: 'MEDIO',
-      hora: '10:12',
-      signos: [
-        { label: 'Temp 38.2', tipo: 'temp' },
-        { label: 'Resp 24', tipo: 'resp' }
-      ],
-      estado: 'VIGILANCIA'
-    },
-    {
-      id: '00550',
-      riesgo: '0.41',
-      tendencia: 'BAJO',
-      hora: '10:07',
-      signos: [
-        { label: 'HR 82', tipo: 'map' },
-        { label: 'MAP 82', tipo: 'map' }
-      ],
-      estado: 'NUEVA'
-    }
-  ];
+  readonly openapiClient = inject(OpenApiClient);
+  pacienteSeleccionado: any;
 
-  constructor() { }
+  displayedColumns: string[] = [
+    'id',
+    'riesgo',
+    'tendencia',
+    'hora',
+    'signos',
+    'estado',
+    'acciones',
+  ];
+  pacientes: any[] = [];
+
+  constructor() {}
   ngOnInit(): void {
-    this.openapiClient.getPatientsData().subscribe((data: Array<>) => {
-      this.pacientes=data.map()
+  }
+
+  obtenerDatos() {
+    if(this.pacienteSeleccionado) {
+      this.openapiClient.scoreApiV1ScorePost(this.pacienteSeleccionado.datos).subscribe((data) => {
+        console.log(data);
+      });
+    }
+    
+  }
+
+  seleccionarTurnos(turno: MatSelectChange) {
+    const numeroTurno = turno.value;
+
+    this.openapiClient.getPatientsData(numeroTurno).subscribe((data: any) => {
+
+      this.pacientes = data.batch.map((paciente: any) => ({
+        id: paciente.patient_id,
+        //riesgo: paciente.score,
+        //tendencia: paciente.score >= 85 ? 'ALTO' : paciente.score >= 80 ? 'MEDIO' : 'BAJO',
+        //hora: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+        signos: this.obtenerSignos(paciente.records),
+        estado: Math.random() > 0.5 ? 'NUEVA' : 'VIGILANCIA',
+        datos: paciente.records
+      }));
     });
+    
+  }
+
+  obtenerSignos(datosPaciente: any) {
+    return Object.keys(datosPaciente).reduce((acc: any[], key) => {
+      if (CHIP_MAP[key]) {
+        acc.push({
+          label: `${CHIP_MAP[key]} ${datosPaciente[key]}`,
+          tipo: CHIP_MAP[key] || 'info',
+          value: datosPaciente[key],
+        });
+      }
+
+      return acc;
+    }, []);
+  }
+
+  seleccionarPaciente(paciente: any) {
+    this.pacienteSeleccionado = paciente;
+    this.obtenerDatos();
   }
 }
