@@ -14,6 +14,7 @@ RUN pip install --upgrade pip && pip install -r requirements.txt
 
 COPY app ./app
 COPY models/production ./models/production
+COPY data/online ./data/online
 COPY src/ ./src/
 
 EXPOSE 8080

@@ -1,11 +1,14 @@
 from __future__ import annotations
 
-from fastapi import APIRouter, FastAPI
+from fastapi import APIRouter, FastAPI, Query
 from fastapi.responses import RedirectResponse
 
 from .config import API_PATH, API_TITLE, API_VERSION
+from .inference import Inference
 from .model import HGBCModel
 from .schemas import SepsisBatchRequest, SepsisScore
+
+infer = Inference()
 
 app = FastAPI(title=API_TITLE, version=API_VERSION)
 model = HGBCModel()
@@ -43,6 +46,11 @@ def score(request: SepsisBatchRequest):
         )
         for pid, prob, pred in zip(pids, probs, preds)
     ]
+
+
+@api.get("/turn")
+def get_turn(number: int = Query(..., ge=1, le=5)):
+    return infer.get_json(number=number)
 
 
 app.include_router(api)
