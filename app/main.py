@@ -1,7 +1,9 @@
 from __future__ import annotations
 
 from fastapi import APIRouter, FastAPI, Query
-from fastapi.responses import RedirectResponse
+from fastapi.middleware.cors import CORSMiddleware
+from fastapi.middleware.gzip import GZipMiddleware
+from fastapi.responses import ORJSONResponse, RedirectResponse
 
 from .config import API_PATH, API_TITLE, API_VERSION
 from .inference import Inference
@@ -10,7 +12,19 @@ from .schemas import SepsisBatchRequest, SepsisScore
 
 infer = Inference()
 
-app = FastAPI(title=API_TITLE, version=API_VERSION)
+app = FastAPI(
+    title=API_TITLE,
+    version=API_VERSION,
+    default_response_class=ORJSONResponse,
+)
+app.add_middleware(GZipMiddleware, minimum_size=1024)
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 model = HGBCModel()
 
 api = APIRouter(prefix=API_PATH)
