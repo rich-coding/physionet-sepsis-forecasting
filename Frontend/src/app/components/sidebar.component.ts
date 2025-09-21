@@ -8,6 +8,7 @@ import { UmbralesOperativosComponent } from "./umbrales-operativos.component";
 import { MatTableModule } from '@angular/material/table';
 import { MatButtonModule } from '@angular/material/button';
 import { OpenApiClient } from '../core/api/client/openapi-client';
+import { PatientsResponse, SepsisScore } from '../core/api/models/sepsis.models';
 
 @Component({
   selector: 'app-sidebar',
@@ -95,8 +96,11 @@ export class SidebarComponent implements OnInit {
 
   constructor() { }
   ngOnInit(): void {
-    this.openapiClient.getPatientsData().subscribe((data: Array<>) => {
-      this.pacientes=data.map()
+    this.openapiClient.getPatientsData(1).subscribe((res: PatientsResponse) => {
+      console.log("Value patients: ", res.metadata.total_patients);
+      this.openapiClient.scoreApiV1ScorePost(res).subscribe((scores: SepsisScore[]) => {
+         console.log("Responses: ", scores);
+      });
     });
   }
 }
