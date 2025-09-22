@@ -9,7 +9,8 @@ terraform {
 }
 
 locals {
-  registry = split("/", var.image_uri)[0]  
+  registry_api = split("/", var.image_uri_api)[0]  
+  registry_frontend = split("/", var.image_uri_frontend)[0]  
 }
 
 provider "aws" {
@@ -33,13 +34,34 @@ resource "aws_security_group" "app_sg" {
   name        = "ec2-docker-app-sg"
   description = "Allow inbound on host_port and all outbound"
   vpc_id      = data.aws_vpc.default.id
-
+  
   ingress {
-    from_port   = var.host_port
-    to_port     = var.host_port
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
-    ipv6_cidr_blocks = ["::/0"]
+    from_port         = 22
+    to_port           = 22
+    protocol          = "tcp"
+    cidr_blocks       = ["0.0.0.0/0"]
+    ipv6_cidr_blocks  = ["::/0"]
+    description       = "Frontend"
+  }
+
+  # Front
+  ingress {
+    from_port         = var.host_port_front
+    to_port           = var.host_port_front
+    protocol          = "tcp"
+    cidr_blocks       = ["0.0.0.0/0"]
+    ipv6_cidr_blocks  = ["::/0"]
+    description       = "Frontend"
+  }
+
+  # API
+  ingress {
+    from_port         = var.host_port_api
+    to_port           = var.host_port_api
+    protocol          = "tcp"
+    cidr_blocks       = ["0.0.0.0/0"]
+    ipv6_cidr_blocks  = ["::/0"]
+    description       = "API"
   }
 
   egress {
@@ -95,10 +117,15 @@ resource "aws_instance" "app" {
   associate_public_ip_address = true
   user_data = templatefile("${path.module}/user_data.sh.tftpl", {
     region          = var.aws_region
-    image_uri       = var.image_uri
-    host_port       = var.host_port
+    compose_content = file(abspath("${path.root}/../docker-compose-prod.yml"))
+    image_uri_api   = var.image_uri_api
+    image_uri_front = var.image_uri_frontend
+    host_port_api   = var.host_port_api
+    host_port_front = var.host_port_front
     container_port  = var.app_port
-    registry        = local.registry
+    compose_project = var.compose_project
+    registry_api    = local.registry_api
+    registry_front  = local.registry_frontend
   })
   root_block_device {
     volume_size           = var.root_volume_size

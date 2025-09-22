@@ -1,13 +1,35 @@
 #!/bin/bash
-set -xe
-dnf -y update
-dnf -y install docker awscli
-systemctl enable --now docker
+set -euxo pipefail
+
+# Paquetes y Docker
+(dnf -y update || yum -y update)
+(dnf -y install docker awscli wget || yum -y install docker awscli wget)
+systemctl enable docker
+systemctl start docker
+
+PLUGIN_DIR="/usr/local/lib/docker/cli-plugins"
+mkdir -p "$PLUGIN_DIR"
+ARCH="$(uname -m)"
+curl -fsSL "https://github.com/docker/compose/releases/latest/download/docker-compose-linux-$ARCH" \
+  -o "$PLUGIN_DIR/docker-compose"
+chmod +x "$PLUGIN_DIR/docker-compose"
+
+BASE_DIR="/home/ec2-user/${compose_project}"
+mkdir -p "$BASE_DIR"
+COMPOSE_FILE="$BASE_DIR/docker-compose-prod.yml"
+
+# Login ECR (API)
+aws ecr get-login-password --region "${region}" \
+  | docker login --username AWS --password-stdin "${registry_api}"
 
 
-aws ecr get-login-password --region ${region} \
-    | docker login --username AWS --password-stdin "${registry}"
+cat > "$COMPOSE_FILE" <<'YAML'
+${compose_content}
+YAML
 
-docker pull "${image_uri}"
-docker ps -aq --filter "name=app" | xargs -r docker rm -f
-docker run -d --name app -p ${host_port}:${container_port} --restart unless-stopped "${image_uri}"
+# 5) Levantar
+cd "$${BASE_DIR}"
+docker docker compose -f $COMPOSE_FILE pull || true
+docker compose -f $COMPOSE_FILE up -d
+
+echo "Compose up usando tu docker-compose.yaml en $COMPOSE_FILE" | tee -a /var/log/cloud-init-output.log

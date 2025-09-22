@@ -7,5 +7,6 @@ output "public_dns" {
 }
 
 output "url" {
-  value = "http://${aws_instance.app.public_dns}:${var.host_port}"
+  value = "http://${aws_instance.app.public_dns}:${var.app_port}"
 }
+

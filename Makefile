@@ -33,6 +33,7 @@ KEY_NAME=FirstEC2InstancePairKey
 HOST_PORT=80
 APP_PORT=80
 INSTANCE_PROFILE_NAME=LabInstanceProfile
+PROJECT_NAME=sepsis
 
 .PHONY: help venv install train serve docker-build-api docker-build-frontend docker-build-all \
         up down logs ps docker-run test checks \
@@ -136,7 +137,11 @@ ec2-deploy: ensure-terraform
 		-var "instance_profile_name=$(INSTANCE_PROFILE_NAME)" \
 		-var "key_name=$(KEY_NAME)" \
 		-var "image_uri_api=$(API_IMAGE_URI)" \
-		-var "image_uri_frontend=$(FE_IMAGE_URI)"
+		-var "image_uri_frontend=$(FE_IMAGE_URI)" \
+		-var "compose_project=$(PROJECT_NAME)" \
+		-var "host_port_api=8081" \
+		-var "host_port_front=8080" \
+		-var "app_port=80"
 
 ec2-destroy: ensure-terraform
 	@test -n "$(AWS_REGION)" || (echo "Falta AWS_REGION"; exit 1)
