@@ -9,6 +9,7 @@ import { MatTableModule } from '@angular/material/table';
 import { MatButtonModule } from '@angular/material/button';
 import { OpenApiClient } from '../core/api/client/openapi-client';
 import { MatSelectChange, MatSelectModule } from '@angular/material/select';
+import { TurnoSignal } from '../shared/signals/turno.signal';
 
 const CHIP_MAP: any = {
   ICULOS: 'Tiempo UCI',
@@ -39,12 +40,14 @@ const CHIP_MAP: any = {
     UmbralesOperativosComponent,
     MatTableModule,
     MatButtonModule,
-    MatSelectModule
+    MatSelectModule,
   ],
 })
 export class SidebarComponent implements OnInit {
   readonly openapiClient = inject(OpenApiClient);
   pacienteSeleccionado: any;
+  datosScore: any;
+  numeroTurnoSeleccionado: string = '';
 
   displayedColumns: string[] = [
     'id',
@@ -57,44 +60,53 @@ export class SidebarComponent implements OnInit {
   ];
   pacientes: any[] = [];
 
-  constructor() {}
-  ngOnInit(): void {
+  constructor(private turnoSignal: TurnoSignal) {}
+  ngOnInit(): void {}
+
+  obtenerDatos(datosPacientes: any) {
+    this.openapiClient
+      .scoreApiV1ScorePost(datosPacientes, this.numeroTurnoSeleccionado)
+      .subscribe((data) => {
+        this.datosScore = data;
+        this.pacientes = datosPacientes.batch.map((paciente: any) => {
+          const datosScorePaciente = data.find((d: any) => d.patient_id === paciente.patient_id);
+          return {
+            id: paciente.patient_id,
+            riesgo: datosScorePaciente?.score || 0,
+            tendencia: datosScorePaciente && datosScorePaciente.score >= 0.85 ? 'ALTO' : datosScorePaciente && datosScorePaciente.score >= 0.80 ? 'MEDIO' : 'BAJO',
+            hora: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+            signos: this.obtenerSignos(paciente.records),
+            estado: Math.random() > 0.5 ? 'NUEVA' : 'VIGILANCIA',
+            datos: paciente.records[0],
+            pred: datosScorePaciente?.pred || 0
+          };
+        });
+
+        this.pacientes.sort((a, b) => a.riesgo - b.riesgo);
+        this.turnoSignal.value = this.pacientes;
+      });
   }
 
-  obtenerDatos() {
-    if(this.pacienteSeleccionado) {
-      this.openapiClient.scoreApiV1ScorePost(this.pacienteSeleccionado.datos).subscribe((data) => {
-        console.log(data);
-      });
-    }
-    
+  filtrarPorRiesgo(riesgo: string) {
+    return this.pacientes.filter(paciente => paciente.tendencia === riesgo);
   }
 
   seleccionarTurnos(turno: MatSelectChange) {
-    const numeroTurno = turno.value;
+    this.numeroTurnoSeleccionado = turno.value;
 
-    this.openapiClient.getPatientsData(numeroTurno).subscribe((data: any) => {
-
-      this.pacientes = data.batch.map((paciente: any) => ({
-        id: paciente.patient_id,
-        //riesgo: paciente.score,
-        //tendencia: paciente.score >= 85 ? 'ALTO' : paciente.score >= 80 ? 'MEDIO' : 'BAJO',
-        //hora: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-        signos: this.obtenerSignos(paciente.records),
-        estado: Math.random() > 0.5 ? 'NUEVA' : 'VIGILANCIA',
-        datos: paciente.records
-      }));
+    this.openapiClient.getPatientsData(this.numeroTurnoSeleccionado).subscribe((data: any) => {
+      this.obtenerDatos(data);
     });
-    
   }
 
   obtenerSignos(datosPaciente: any) {
-    return Object.keys(datosPaciente).reduce((acc: any[], key) => {
+    const datPaciente = datosPaciente[0] ;
+    return Object.keys(datPaciente).reduce((acc: any[], key) => {
       if (CHIP_MAP[key]) {
         acc.push({
-          label: `${CHIP_MAP[key]} ${datosPaciente[key]}`,
+          label: `${CHIP_MAP[key]} ${datPaciente[key]}`,
           tipo: CHIP_MAP[key] || 'info',
-          value: datosPaciente[key],
+          value: datPaciente[key] || '',
         });
       }
 
@@ -104,6 +116,5 @@ export class SidebarComponent implements OnInit {
 
   seleccionarPaciente(paciente: any) {
     this.pacienteSeleccionado = paciente;
-    this.obtenerDatos();
   }
 }

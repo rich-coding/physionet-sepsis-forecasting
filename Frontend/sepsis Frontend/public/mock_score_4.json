@@ -1,0 +1,164 @@
+[
+  {
+    "patient_id": "p018881",
+    "score": 0.7662628140349637,
+    "pred": 1,
+    "threshold": 0.459
+  },
+  {
+    "patient_id": "p019105",
+    "score": 0.33761573495929253,
+    "pred": 0,
+    "threshold": 0.459
+  },
+  {
+    "patient_id": "p019280",
+    "score": 0.4122529178165647,
+    "pred": 0,
+    "threshold": 0.459
+  },
+  {
+    "patient_id": "p019387",
+    "score": 0.7584958502091234,
+    "pred": 1,
+    "threshold": 0.459
+  },
+  {
+    "patient_id": "p019844",
+    "score": 0.28133265603379715,
+    "pred": 0,
+    "threshold": 0.459
+  },
+  {
+    "patient_id": "p100266",
+    "score": 0.18777486648048086,
+    "pred": 0,
+    "threshold": 0.459
+  },
+  {
+    "patient_id": "p100549",
+    "score": 0.27871149489522795,
+    "pred": 0,
+    "threshold": 0.459
+  },
+  {
+    "patient_id": "p100653",
+    "score": 0.44897921548835845,
+    "pred": 0,
+    "threshold": 0.459
+  },
+  {
+    "patient_id": "p101490",
+    "score": 0.2875484916929408,
+    "pred": 0,
+    "threshold": 0.459
+  },
+  {
+    "patient_id": "p101584",
+    "score": 0.3326865916641971,
+    "pred": 0,
+    "threshold": 0.459
+  },
+  {
+    "patient_id": "p102784",
+    "score": 0.9540466693145133,
+    "pred": 1,
+    "threshold": 0.459
+  },
+  {
+    "patient_id": "p102970",
+    "score": 0.12397626565438884,
+    "pred": 0,
+    "threshold": 0.459
+  },
+  {
+    "patient_id": "p103160",
+    "score": 0.5486311532062955,
+    "pred": 1,
+    "threshold": 0.459
+  },
+  {
+    "patient_id": "p103482",
+    "score": 0.6846099252519267,
+    "pred": 1,
+    "threshold": 0.459
+  },
+  {
+    "patient_id": "p104015",
+    "score": 0.424098865752806,
+    "pred": 0,
+    "threshold": 0.459
+  },
+  {
+    "patient_id": "p104320",
+    "score": 0.45488027988991825,
+    "pred": 0,
+    "threshold": 0.459
+  },
+  {
+    "patient_id": "p104548",
+    "score": 0.3075143703522881,
+    "pred": 0,
+    "threshold": 0.459
+  },
+  {
+    "patient_id": "p104715",
+    "score": 0.13564953168246,
+    "pred": 0,
+    "threshold": 0.459
+  },
+  {
+    "patient_id": "p104761",
+    "score": 0.3514962534646814,
+    "pred": 0,
+    "threshold": 0.459
+  },
+  {
+    "patient_id": "p105265",
+    "score": 0.14928335980429908,
+    "pred": 0,
+    "threshold": 0.459
+  },
+  {
+    "patient_id": "p106706",
+    "score": 0.59394748752678,
+    "pred": 1,
+    "threshold": 0.459
+  },
+  {
+    "patient_id": "p106722",
+    "score": 0.06643225644761497,
+    "pred": 0,
+    "threshold": 0.459
+  },
+  {
+    "patient_id": "p106992",
+    "score": 0.08983331604430973,
+    "pred": 0,
+    "threshold": 0.459
+  },
+  {
+    "patient_id": "p107548",
+    "score": 0.1882900748406349,
+    "pred": 0,
+    "threshold": 0.459
+  },
+  {
+    "patient_id": "p107615",
+    "score": 0.4078664297918985,
+    "pred": 0,
+    "threshold": 0.459
+  },
+  {
+    "patient_id": "p107666",
+    "score": 0.2532911438925434,
+    "pred": 0,
+    "threshold": 0.459
+  },
+  {
+    "patient_id": "p108423",
+    "score": 0.19362653597715673,
+    "pred": 0,
+    "threshold": 0.459
+  }
+]

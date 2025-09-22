@@ -21,9 +21,9 @@ export class OpenApiClient {
    * @param request The batch request containing patient data.
    * @returns An observable of an array of sepsis scores.
    */
-  scoreApiV1ScorePost(request: any): Observable<SepsisScore[]> {
-    const url = `${this.baseUrl}/api/v1/score`;
-    return this.http.post<SepsisScore[]>(url, request);
+  scoreApiV1ScorePost(request: any, turno: string): Observable<SepsisScore[]> {
+    const url = `${this.mockUrl}score_${turno}.json`;
+    return this.http.get<SepsisScore[]>(url);
   }
 
   /**
