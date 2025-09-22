@@ -29,8 +29,13 @@
   box-shadow: 0 4px 12px rgba(124,58,237,.12);
   transform: translateY(-1px);
 }
+.pacientes-table-container {
+  max-height: 20vh;
+  overflow-y: auto;
+}
 /* Chips para signos clave en la tabla de pacientes */
 .signos-chips {
+  margin-top: 15px;
   display: flex;
   flex-wrap: wrap;
   gap: 4px;

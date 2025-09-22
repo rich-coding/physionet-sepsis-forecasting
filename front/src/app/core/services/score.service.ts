@@ -6,7 +6,7 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { OpenApiClient } from '../api/client/openapi-client';
-import { PatientsResponse, SepsisBatchRequest, SepsisScore } from '../api/models/sepsis.models';
+import { SepsisBatchRequest, SepsisScore } from '../api/models/sepsis.models';
 import { nivelRiesgo } from '../../shared/utils/risk.util';
 
 /**
@@ -23,10 +23,10 @@ export class ScoreService {
    * @param body Cuerpo de la solicitud que contiene los datos del paciente.
    * @returns Un observable con la respuesta mapeada a un objeto de vista.
    */
-  score(body: PatientsResponse): Observable<{ probabilidad: number; riesgo: 'ALTO' | 'MEDIO' | 'BAJO'; mensajes?: string[] }> {
+  score(body: SepsisBatchRequest): Observable<{ probabilidad: number; riesgo: 'ALTO' | 'MEDIO' | 'BAJO'; mensajes?: string[] }> {
     return this.apiClient.scoreApiV1ScorePost(body).pipe(
       map((response: SepsisScore[]) => {
-        const score = response[0]; 
+        const score = response[0]; // Asumimos que solo hay un paciente en el batch
         const probabilidad = score.score;
         let riesgo: 'ALTO' | 'MEDIO' | 'BAJO';
         if (probabilidad >= 0.8) {
@@ -46,7 +46,7 @@ export class ScoreService {
    * @param body Cuerpo de la solicitud que contiene los datos del paciente.
    * @returns Un observable con la respuesta cruda del servidor.
    */
-  scoreRaw(body: PatientsResponse): Observable<SepsisScore[]> {
+  scoreRaw(body: SepsisBatchRequest): Observable<SepsisScore[]> {
     return this.apiClient.scoreApiV1ScorePost(body);
   }
 }

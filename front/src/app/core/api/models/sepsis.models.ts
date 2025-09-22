@@ -44,14 +44,3 @@ export interface SepsisScore {
   pred: number;
   threshold: number;
 }
-
-
-export interface Metadata {
-  turn: number;
-  total_patients: number;
-}
-
-export interface PatientsResponse {
-  metadata: Metadata;
-  batch: SepsisBatchRequest;
-}

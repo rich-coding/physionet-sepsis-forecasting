@@ -3,16 +3,15 @@
  * Fecha: 20 de septiembre de 2025
  */
 
-import { HttpClient, HttpParams } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { SepsisBatchRequest, SepsisScore, PatientsResponse } from '../models/sepsis.models';
+import { SepsisBatchRequest, SepsisScore } from '../models/sepsis.models';
 
 @Injectable({
   providedIn: 'root',
 })
 export class OpenApiClient {
-
   constructor(private http: HttpClient) {}
 
   /**
@@ -20,18 +19,23 @@ export class OpenApiClient {
    * @param request The batch request containing patient data.
    * @returns An observable of an array of sepsis scores.
    */
-  scoreApiV1ScorePost(request: PatientsResponse): Observable<SepsisScore[]> {
+  scoreApiV1ScorePost(request: any): Observable<SepsisScore[]> {
     const url = `/api/v1/score`;
     return this.http.post<SepsisScore[]>(url, request);
   }
 
   /**
-   * Método para obtener los pacientes
-   * @returns Un observable con los pacientes por turn
+   * Método para obtener los datos del archivo mock.json.
+   * @returns Un observable con los datos del archivo mock.json.
    */
-   getPatientsData(number: 1|2|3|4|5): Observable<PatientsResponse> {
+  getPatientsData(number: string): Observable<any> {
+    const headers = new HttpHeaders({
+      Accept: 'application/json',
+      'Accept-Encoding': 'gzip, deflate, br',
+      'Content-Type': 'application/json'
+    })
+    
     const params = new HttpParams().set('number', String(number));
-    // No intentes setear 'Accept-Encoding': el navegador ya lo envía.
-    return this.http.get<PatientsResponse>(`/api/v1/turn`, { params });
+    return this.http.get<any>(`/api/v1/turn`, { headers, params });
   }
 }
