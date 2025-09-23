@@ -82,7 +82,7 @@ export class SidebarComponent implements OnInit {
           };
         });
 
-        this.pacientes.sort((a, b) => a.riesgo - b.riesgo);
+        this.pacientes.sort((a, b) => b.riesgo - a.riesgo);
         this.turnoSignal.value = this.pacientes;
       });
   }
