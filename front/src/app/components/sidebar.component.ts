@@ -66,7 +66,7 @@ export class SidebarComponent implements OnInit {
 
   obtenerDatos(datosPacientes: any) {
     this.openapiClient
-      .scoreApiV1ScorePost(datosPacientes, this.numeroTurnoSeleccionado)
+      .scoreApiV1ScorePost(datosPacientes)
       .subscribe((data) => {
         this.datosScore = data;
         this.pacientes = datosPacientes.batch.map((paciente: any) => {

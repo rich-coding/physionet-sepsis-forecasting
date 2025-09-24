@@ -3,7 +3,7 @@
  * Fecha: 20 de septiembre de 2025
  */
 
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { SepsisBatchRequest, SepsisScore } from '../models/sepsis.models';
@@ -12,8 +12,6 @@ import { SepsisBatchRequest, SepsisScore } from '../models/sepsis.models';
   providedIn: 'root',
 })
 export class OpenApiClient {
-  private readonly baseUrl = 'http://ec2-3-215-142-220.compute-1.amazonaws.com';
-  private readonly mockUrl = '/assets/mock_'; // Ruta al archivo mock.json
   constructor(private http: HttpClient) {}
 
   /**
@@ -21,25 +19,23 @@ export class OpenApiClient {
    * @param request The batch request containing patient data.
    * @returns An observable of an array of sepsis scores.
    */
-  scoreApiV1ScorePost(request: any, turno: string): Observable<SepsisScore[]> {
-    const url = `${this.mockUrl}score_${turno}.json`;
-    return this.http.get<SepsisScore[]>(url);
+  scoreApiV1ScorePost(request: any): Observable<SepsisScore[]> {
+    const url = `/api/v1/score`;
+    return this.http.post<SepsisScore[]>(url, request);
   }
 
   /**
    * Método para obtener los datos del archivo mock.json.
    * @returns Un observable con los datos del archivo mock.json.
    */
-  getPatientsData(turno: string): Observable<any> {
-    //const url = `${this.baseUrl}/api/v1/turn?number=${turno}`;
-    return this.http.get<any>(`${this.mockUrl}${turno}.json`, {
-      headers: new HttpHeaders({
-        Accept: 'application/json',
-        'Accept-Encoding': 'gzip, deflate, br',
-        'Content-Type': 'application/json'
-      }),
-      timeout: 60000,
-      keepalive: true
-    });
+  getPatientsData(number: string): Observable<any> {
+    const headers = new HttpHeaders({
+      Accept: 'application/json',
+      'Accept-Encoding': 'gzip, deflate, br',
+      'Content-Type': 'application/json'
+    })
+    
+    const params = new HttpParams().set('number', String(number));
+    return this.http.get<any>(`/api/v1/turn`, { headers, params });
   }
 }

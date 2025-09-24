@@ -24,7 +24,7 @@ export class ScoreService {
    * @returns Un observable con la respuesta mapeada a un objeto de vista.
    */
   score(body: SepsisBatchRequest): Observable<{ probabilidad: number; riesgo: 'ALTO' | 'MEDIO' | 'BAJO'; mensajes?: string[] }> {
-    return this.apiClient.scoreApiV1ScorePost(body, '').pipe(
+    return this.apiClient.scoreApiV1ScorePost(body).pipe(
       map((response: SepsisScore[]) => {
         const score = response[0]; // Asumimos que solo hay un paciente en el batch
         const probabilidad = score.score;
@@ -47,7 +47,7 @@ export class ScoreService {
    * @returns Un observable con la respuesta cruda del servidor.
    */
   scoreRaw(body: SepsisBatchRequest): Observable<SepsisScore[]> {
-    return this.apiClient.scoreApiV1ScorePost(body, '');
+    return this.apiClient.scoreApiV1ScorePost(body);
   }
 }
 
