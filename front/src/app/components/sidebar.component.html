@@ -8,18 +8,24 @@
       <!-- Card NOTAS -->
 
       @if(pacientes.length){
-      <mat-card class="sidebar-tile risk-tile alto">
-        <div class="chip alto">ALTO</div>
-        <div class="risk-count">{{ filtrarPorRiesgo('ALTO').length }} pacientes</div>
-      </mat-card>
-      <mat-card class="sidebar-tile risk-tile medio">
-        <div class="chip medio">MEDIO</div>
-        <div class="risk-count">{{ filtrarPorRiesgo('MEDIO').length }} pacientes</div>
-      </mat-card>
-      <mat-card class="sidebar-tile risk-tile bajo">
-        <div class="chip bajo">BAJO</div>
-        <div class="risk-count">{{ filtrarPorRiesgo('BAJO').length }} pacientes</div>
-      </mat-card>
+      <div (click)="Filtroclick('ALTO')">
+        <mat-card class="sidebar-tile risk-tile alto">
+          <div class="chip alto">ALTO</div>
+          <div class="risk-count">{{ filtrarPorRiesgo('ALTO').length }} pacientes</div>
+        </mat-card>
+      </div>
+      <div (click)="Filtroclick('MEDIO')">
+        <mat-card class="sidebar-tile risk-tile medio">
+          <div class="chip medio">MEDIO</div>
+          <div class="risk-count">{{ filtrarPorRiesgo('MEDIO').length }} pacientes</div>
+        </mat-card>
+      </div>
+      <div (click)="Filtroclick('BAJO')">
+        <mat-card class="sidebar-tile risk-tile bajo">
+          <div class="chip bajo">BAJO</div>
+          <div class="risk-count">{{ filtrarPorRiesgo('BAJO').length }} pacientes</div>
+        </mat-card>
+      </div>
       }
 
       <mat-card class="sidebar-tile tasa-tile">
@@ -45,7 +51,7 @@
         <mat-option value="2">Turno 2</mat-option>
         <mat-option value="3">Turno 3</mat-option>
         <mat-option value="4">Turno 4</mat-option>
-        <mat-option value="4">Turno 5</mat-option>
+        <mat-option value="5">Turno 5</mat-option>
       </mat-select>
     </mat-form-field>
     <app-umbrales-operativos></app-umbrales-operativos>
@@ -65,7 +71,7 @@
         Pacientes (ordenado por riesgo actual)
       </div>
       <div class="pacientes-table-container">
-        <table mat-table [dataSource]="pacientes" class="pacientes-table" matSort>
+        <table mat-table [dataSource]="pacientesFiltrados.length? pacientesFiltrados:pacientes" class="pacientes-table" matSort>
           <!-- ID -->
           <ng-container matColumnDef="id">
             <th
@@ -205,7 +211,7 @@
       <div class="paciente-main">
         <mat-card class="paciente-card">
           <div class="paciente-header">
-            <span class="paciente-title">Paciente {{pacienteSeleccionado?.id}}</span>
+            <span class="paciente-title">Paciente {{ pacienteSeleccionado?.id }}</span>
             <span class="badge-sepsis" *ngIf="pacienteSeleccionado?.pred" tabindex="0">SEPSIS</span>
           </div>
           <div class="paciente-chart-area">

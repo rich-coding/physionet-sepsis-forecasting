@@ -59,6 +59,7 @@ export class SidebarComponent implements OnInit {
     'acciones',
   ];
   pacientes: any[] = [];
+  pacientesFiltrados: any[] = [];
 
   constructor(private turnoSignal: TurnoSignal) {}
   ngOnInit(): void {}
@@ -116,5 +117,8 @@ export class SidebarComponent implements OnInit {
 
   seleccionarPaciente(paciente: any) {
     this.pacienteSeleccionado = paciente;
+  }
+  Filtroclick(riesgo:string) {
+    this.pacientesFiltrados = this.filtrarPorRiesgo(riesgo);
   }
 }
