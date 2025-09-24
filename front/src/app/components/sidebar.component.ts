@@ -59,13 +59,14 @@ export class SidebarComponent implements OnInit {
     'acciones',
   ];
   pacientes: any[] = [];
+  pacientesFiltrados: any[] = [];
 
   constructor(private turnoSignal: TurnoSignal) {}
   ngOnInit(): void {}
 
   obtenerDatos(datosPacientes: any) {
     this.openapiClient
-      .scoreApiV1ScorePost(datosPacientes)
+      .scoreApiV1ScorePost(datosPacientes, this.numeroTurnoSeleccionado)
       .subscribe((data) => {
         this.datosScore = data;
         this.pacientes = datosPacientes.batch.map((paciente: any) => {
@@ -116,5 +117,8 @@ export class SidebarComponent implements OnInit {
 
   seleccionarPaciente(paciente: any) {
     this.pacienteSeleccionado = paciente;
+  }
+  Filtroclick(riesgo:string) {
+    this.pacientesFiltrados = this.filtrarPorRiesgo(riesgo);
   }
 }

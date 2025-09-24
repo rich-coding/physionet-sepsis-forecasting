@@ -13,6 +13,7 @@ import { HttpClient } from '@angular/common/http';
   providedIn: 'root',
 })
 export class HealthService {
+  private readonly baseUrl = 'http://ec2-44-192-130-121.compute-1.amazonaws.com';
 
   constructor(private http: HttpClient) {}
 
@@ -21,7 +22,7 @@ export class HealthService {
    * @returns Un observable con el estado de salud.
    */
   getHealth(): Observable<any> {
-    const url = `/api/v1/health`;
+    const url = `${this.baseUrl}/api/v1/health`;
     return this.http.get<any>(url);
   }
 }
