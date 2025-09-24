@@ -1,0 +1,296 @@
+<mat-sidenav-container class="sidebar-container">
+  <mat-sidenav #sidenav mode="side" opened class="sidebar-sidenav">
+    <div class="sidebar-content">
+      <mat-card class="sidebar-tile kpi-tile">
+        <div class="tile-title">Alertas nuevas (24 h)</div>
+        <div class="tile-value">12</div>
+      </mat-card>
+      <!-- Card NOTAS -->
+
+      @if(pacientes.length){
+      <div (click)="Filtroclick('ALTO')">
+        <mat-card class="sidebar-tile risk-tile alto">
+          <div class="chip alto">ALTO</div>
+          <div class="risk-count">{{ filtrarPorRiesgo('ALTO').length }} pacientes</div>
+        </mat-card>
+      </div>
+      <div (click)="Filtroclick('MEDIO')">
+        <mat-card class="sidebar-tile risk-tile medio">
+          <div class="chip medio">MEDIO</div>
+          <div class="risk-count">{{ filtrarPorRiesgo('MEDIO').length }} pacientes</div>
+        </mat-card>
+      </div>
+      <div (click)="Filtroclick('BAJO')">
+        <mat-card class="sidebar-tile risk-tile bajo">
+          <div class="chip bajo">BAJO</div>
+          <div class="risk-count">{{ filtrarPorRiesgo('BAJO').length }} pacientes</div>
+        </mat-card>
+      </div>
+      }
+
+      <mat-card class="sidebar-tile tasa-tile">
+        <div class="tile-title">Tasa de alertas</div>
+        <div class="tile-value">
+          <span class="main">2.1</span> <span class="suffix">/ 24 h</span>
+        </div>
+      </mat-card>
+      <mat-card class="sidebar-tile estado-tile">
+        <div class="tile-title">Estado del sistema</div>
+        <mat-list>
+          <mat-list-item>IA operativa</mat-list-item>
+          <mat-list-item>0 incidentes (24 h)</mat-list-item>
+        </mat-list>
+      </mat-card>
+    </div>
+  </mat-sidenav>
+  <mat-sidenav-content>
+    <mat-form-field>
+      <mat-label>Seleccione un turno</mat-label>
+      <mat-select (selectionChange)="seleccionarTurnos($event)">
+        <mat-option value="1">Turno 1</mat-option>
+        <mat-option value="2">Turno 2</mat-option>
+        <mat-option value="3">Turno 3</mat-option>
+        <mat-option value="4">Turno 4</mat-option>
+        <mat-option value="5">Turno 5</mat-option>
+      </mat-select>
+    </mat-form-field>
+    <app-umbrales-operativos></app-umbrales-operativos>
+
+    <!-- Tarjeta de pacientes -->
+    <mat-card class="pacientes-card">
+      <div
+        class="pacientes-title"
+        style="
+          font-weight: 800;
+          font-size: 1.25rem;
+          color: #0f172a;
+          margin-bottom: 12px;
+          margin-left: 24px;
+        "
+      >
+        Pacientes (ordenado por riesgo actual)
+      </div>
+      <div class="pacientes-table-container">
+        <table mat-table [dataSource]="pacientesFiltrados.length? pacientesFiltrados:pacientes" class="pacientes-table" matSort>
+          <!-- ID -->
+          <ng-container matColumnDef="id">
+            <th
+              mat-header-cell
+              *matHeaderCellDef
+              sticky
+              class="header-cell"
+              style="font-weight: 700"
+            >
+              ID
+            </th>
+            <td mat-cell *matCellDef="let paciente" style="text-align: center; font-size: 16px">
+              <span class="id-prefix">ID</span>
+              <span class="id-value">{{ paciente.id }}</span>
+            </td>
+          </ng-container>
+          <!-- Riesgo 6h -->
+          <ng-container matColumnDef="riesgo">
+            <th
+              mat-header-cell
+              *matHeaderCellDef
+              sticky
+              class="header-cell"
+              style="font-weight: 700"
+            >
+              RIESGO ≤ 6H
+            </th>
+            <td mat-cell *matCellDef="let paciente" style="text-align: center; font-size: 16px">
+              <span class="riesgo-value">p={{ paciente.riesgo }}</span>
+            </td>
+          </ng-container>
+          <!-- Tendencia 6h -->
+          <ng-container matColumnDef="tendencia">
+            <th
+              mat-header-cell
+              *matHeaderCellDef
+              sticky
+              class="header-cell"
+              style="font-weight: 700"
+            >
+              TENDENCIA 6H
+            </th>
+            <td mat-cell *matCellDef="let paciente" style="text-align: center; font-size: 16px">
+              <span [ngClass]="'chip-tendencia'" tabindex="0">{{ paciente.tendencia }}</span>
+            </td>
+          </ng-container>
+          <!-- Última medición -->
+          <ng-container matColumnDef="hora">
+            <th
+              mat-header-cell
+              *matHeaderCellDef
+              sticky
+              class="header-cell"
+              style="font-weight: 700"
+            >
+              ÚLTIMA MEDICIÓN
+            </th>
+            <td mat-cell *matCellDef="let paciente" style="text-align: center; font-size: 16px">
+              <span class="hora-value">{{ paciente.hora }}</span>
+            </td>
+          </ng-container>
+          <!-- Signos clave -->
+          <ng-container matColumnDef="signos">
+            <th
+              mat-header-cell
+              *matHeaderCellDef
+              sticky
+              class="header-cell"
+              style="font-weight: 700"
+            >
+              SIGNOS CLAVE
+            </th>
+            <td mat-cell *matCellDef="let paciente">
+              <div class="signos-chips">
+                <ng-container *ngFor="let signo of paciente.signos">
+                  <span
+                    *ngIf="signo.value"
+                    [ngClass]="'chip-signo chip-' + signo.tipo"
+                    tabindex="0"
+                    >{{ signo.label }}</span
+                  >
+                </ng-container>
+              </div>
+            </td>
+          </ng-container>
+          <!-- Estado -->
+          <ng-container matColumnDef="estado">
+            <th
+              mat-header-cell
+              *matHeaderCellDef
+              sticky
+              class="header-cell estado-header"
+              style="font-weight: 700"
+            >
+              ESTADO
+            </th>
+            <td mat-cell *matCellDef="let paciente" style="text-align: center; font-size: 16px">
+              <span class="estado-value">{{ paciente.estado }}</span>
+            </td>
+          </ng-container>
+          <!-- Acciones -->
+          <ng-container matColumnDef="acciones">
+            <th
+              mat-header-cell
+              *matHeaderCellDef
+              sticky
+              class="header-cell"
+              style="font-weight: 700"
+            >
+              ACCIONES
+            </th>
+            <td mat-cell *matCellDef="let paciente">
+              <div class="acciones-chips">
+                <button class="chip-accion" tabindex="0" (click)="seleccionarPaciente(paciente)">
+                  Revisar
+                </button>
+                <button class="chip-accion" tabindex="0">Escalar</button>
+              </div>
+            </td>
+          </ng-container>
+          <tr mat-header-row *matHeaderRowDef="displayedColumns" class="header-row"></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedColumns" class="pacientes-row"></tr>
+        </table>
+      </div>
+    </mat-card>
+    <!-- Layout de dos columnas: Paciente y Estado -->
+    <div
+      class="paciente-layout"
+      style="
+        display: grid;
+        grid-template-columns: 1fr 2fr;
+        gap: 24px;
+        align-items: flex-start;
+        margin-top: 24px;
+      "
+    >
+      <div class="paciente-main">
+        <mat-card class="paciente-card">
+          <div class="paciente-header">
+            <span class="paciente-title">Paciente {{ pacienteSeleccionado?.id }}</span>
+            <span class="badge-sepsis" *ngIf="pacienteSeleccionado?.pred" tabindex="0">SEPSIS</span>
+          </div>
+          <div class="paciente-chart-area">
+            <svg
+              viewBox="0 0 320 200"
+              preserveAspectRatio="xMidYMid meet"
+              class="paciente-chart-svg"
+            >
+              <defs>
+                <linearGradient id="chartRed" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stop-color="#d84343" stop-opacity="0.22" />
+                  <stop offset="100%" stop-color="#d84343" stop-opacity="0" />
+                </linearGradient>
+              </defs>
+              <!-- Relleno bajo la línea -->
+              <path
+                d="M0,160 L20,80 L60,60 L100,120 L140,40 L180,60 L220,100 L260,80 L300,120 L320,160 L320,200 L0,200 Z"
+                fill="url(#chartRed)"
+              />
+              <!-- Línea de tendencia -->
+              <path
+                d="M0,160 L20,80 L60,60 L100,120 L140,40 L180,60 L220,100 L260,80 L300,120 L320,160"
+                stroke="#d84343"
+                stroke-width="3"
+                stroke-linecap="round"
+                fill="none"
+                style="transition: d 0.25s ease"
+              />
+              <!-- Línea de referencia p=0.60 -->
+              <line
+                x1="0"
+                y1="120"
+                x2="320"
+                y2="120"
+                stroke="#94a3b8"
+                stroke-width="2"
+                stroke-dasharray="4 6"
+              />
+              <text x="310" y="112" font-size="16" fill="#64748b">p = 0.60</text>
+            </svg>
+            <div class="paciente-chart-leyenda" style="font-size: 1.15rem">
+              Regla de resolución: cerrar si p&lt;0.60 por 3 h.
+            </div>
+          </div>
+        </mat-card>
+        <mat-card
+          class="notas-card"
+          style="
+            margin-top: 16px;
+            background: #fff;
+            border: 1px solid #e5e9f1;
+            border-radius: 16px;
+            box-shadow: 0 6px 18px rgba(16, 24, 40, 0.06);
+            padding: 18px 20px;
+          "
+        >
+          <div class="notas-title" style="font-weight: 800; color: #0f172a; margin-bottom: 8px">
+            NOTAS:
+          </div>
+          <ul class="notas-list">
+            <li>Umbral operativo 0.80</li>
+            <li>Anti-parpadeo: sostener mientras p ≥ 0.80</li>
+            <li>Fallback: si IA cae, ocultar puntajes y mostrar solo signos</li>
+          </ul>
+        </mat-card>
+      </div>
+      <div class="paciente-vitals" *ngIf="pacienteSeleccionado">
+        <mat-card class="vitals-card">
+          <div class="vitals-title">Último estado en sepsis:</div>
+          <dl class="vitals-grid">
+            @for (item of pacienteSeleccionado.signos; track $index) {
+            <div class="vital-item">
+              <dt>{{ item.tipo }}</dt>
+              <dd>{{ item.value }}</dd>
+            </div>
+            }
+          </dl>
+        </mat-card>
+      </div>
+    </div>
+  </mat-sidenav-content>
+</mat-sidenav-container>

@@ -1,0 +1,34 @@
+version: "3.9"
+
+services:
+  sepsis-api:
+    build:
+      context: .                   
+      dockerfile: app/Dockerfile   
+    image: sepsis2019-api:latest
+    container_name: sepsis-api
+    ports:
+      - "8081:80"                  
+    environment:
+      - MODELS_DIR=/app/models/production
+    healthcheck:
+      test: ["CMD", "curl", "-fsS", "http://localhost/health"]
+      interval: 20s
+      timeout: 3s
+      retries: 3
+
+  sepsis-frontend:
+    build:
+      context: ./front          
+      dockerfile: Dockerfile
+    image: sepsis2019-frontend:latest
+    container_name: sepsis-frontend
+    ports:
+      - "8080:80"                  
+    depends_on:
+      - sepsis-api
+    healthcheck:
+      test: ["CMD", "curl", "-fsS", "http://localhost"]
+      interval: 20s
+      timeout: 3s
+      retries: 3

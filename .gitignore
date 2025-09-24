@@ -2,16 +2,11 @@
 __pycache__/
 *.pyc
 .env
+.venv
+venv
 
-# Directorios de datos
-# Esta simple regla ignora la carpeta 'data' completa y todo su contenido.
-# Es la forma más robusta y simple de hacerlo.
-#/data/
-
-# Si por alguna razón SÍ quieres versionar la estructura de la carpeta
-# pero no su contenido, puedes usar estas reglas en su lugar:
-data/*
-!data/.gitkeep
+#MLflow
+mlruns
 
 # Archivos de Notebooks
 .ipynb_checkpoints
@@ -19,3 +14,9 @@ data/*
 # Archivos generados por el sistema operativo
 .DS_Store
 Thumbs.db
+
+#Terraform
+.terraform/
+**/.terraform/*
+*.tfstate
+*.tfstate.*
